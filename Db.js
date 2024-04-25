@@ -1,5 +1,5 @@
 const mongoose=require('mongoose');
-const url='mongodb://localhost:27017/inventory';
+const url='mongodb+srv://KshitizSharma11:16041855@clusterkz.vlm0iyo.mongodb.net/';
 mongoose.connect(url,{
     useNewUrlParser: true,
     useUnifiedTopology: true

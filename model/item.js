@@ -11,23 +11,24 @@ const itemModel=new mongoose.Schema({
         unique: true
     },
     mfd:{
-        type: 'date',
+        type: 'string',
         required: true,
-        unique: true
+        
     },
     exp:{
-        type: 'date',
+        type: 'string',
         required: true,
-        unique: true
+   
     },
     quantity:{
         type: 'number',
         required: true,
-        unique: true,
+        
         default: 1
     },
     pic:{
-        type: 'string'
+        type: 'string',
+        required: true
     }
 })
 
