@@ -17,19 +17,64 @@ router.post('/', async (req, res) => {
         console.error('Error saving item:', error);
         res.status(500).json({ message: 'Failed to save item' });
     }});
-    router.post('/updateQuantity/:itemName', async (req, res) => {
+    router.post('/addQuantity/:itemName', async (req, res) => {
         const { itemName } = req.params;
         const { newQuantity } = req.body;
     
         try {
-            // Find the item by name and update its quantity
-            const item = await Item.findOneAndUpdate({ name: itemName }, { quantity: newQuantity }, { new: true });
+            // Find the item by name
+            const item = await Item.findOne({ name: itemName });
     
             if (!item) {
                 return res.status(404).json({ message: 'Item not found' });
             }
     
-            res.status(200).json({ message: 'Item quantity updated successfully', item });
+            // Update item quantity using $inc to increment the quantity
+            const updatedItem = await Item.findOneAndUpdate(
+                { name: itemName },
+                { $inc: { quantity: newQuantity } },
+                { new: true } // Return the updated item
+            );
+    
+            if (!updatedItem) {
+                return res.status(404).json({ message: 'Failed to update item quantity' });
+            }
+    
+            res.status(200).json({ message: 'Item quantity updated successfully', item: updatedItem });
+        } catch (error) {
+            console.error('Error updating item quantity:', error);
+            res.status(500).json({ message: 'Failed to update item quantity' });
+        }
+    });
+    router.post('/pickQuantity/:itemName', async (req, res) => {
+        const { itemName } = req.params;
+        const { pickedQuantity } = req.body;
+    
+        try {
+            // Find the item by name
+            const item = await Item.findOne({ name: itemName });
+    
+            if (!item) {
+                return res.status(404).json({ message: 'No item found with this name' });
+            }
+    
+            // Check if there's enough quantity to pick
+            if (item.quantity < pickedQuantity) {
+                return res.status(400).json({ message: 'Not enough quantity available for picking' });
+            }
+    
+            // Update item quantity using $inc to decrement the quantity
+            const updatedItem = await Item.findOneAndUpdate(
+                { name: itemName },
+                { $inc: { quantity: -pickedQuantity } }, // Decrement quantity by pickedQuantity
+                { new: true } // Return the updated item
+            );
+    
+            if (!updatedItem) {
+                return res.status(404).json({ message: 'Failed to update item quantity' });
+            }
+    
+            res.status(200).json({ message: 'Item quantity updated successfully', item: updatedItem });
         } catch (error) {
             console.error('Error updating item quantity:', error);
             res.status(500).json({ message: 'Failed to update item quantity' });
