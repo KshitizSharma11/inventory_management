@@ -1,11 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const itemRoutes = require('./routes/itemRoutes');
+const cors = require('cors');
 require('dotenv').config();
 const db=require('./Db');
 const app = express();
 const PORT = process.env.PORT ||2000;
-
+app.use(cors({ origin: '*' }));
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
